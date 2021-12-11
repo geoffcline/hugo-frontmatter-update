@@ -7,6 +7,7 @@ menu:
   main:
     weight: 20
     pre: <i class='fas fa-book'></i>
+
 ---
 Karpenter is an open-source node provisioning project built for Kubernetes.
 Adding Karpenter to a Kubernetes cluster can dramatically improve the efficiency and cost of running workloads on that cluster.

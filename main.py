@@ -8,16 +8,21 @@ except ImportError:
     from yaml import Loader, Dumper
 
 
-# help
 def get_frontmatter(file):
-    result = """title: "Documentation"
-linkTitle: "Docs"
-weight: 20
-menu:
-  main:
-    weight: 20
-    pre: <i class='fas fa-book'></i>"""
-    return result
+    stream = ""
+    inside_yaml = False
+    lines = file.readlines()
+    for line in lines:
+        if line != "---\n" and not inside_yaml:
+            pass
+        elif line != "---\n" and inside_yaml:
+            stream = stream + line
+        elif line == "---\n" and inside_yaml:
+            inside_yaml = False
+        elif line == "---\n" and not inside_yaml:
+            inside_yaml = True
+
+    return stream
 
 
 def parse_yaml(raw):
