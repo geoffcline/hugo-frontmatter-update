@@ -94,10 +94,10 @@ menu:
         v_filename = "test-files/1-target.md"
 
         try:
-            with open(i_filename, "r+") as file:
+            with open(o_filename, "r+") as file:
                 remove_frontmatter(file)
 
-            with open(i_filename, "r") as file:
+            with open(o_filename, "r") as file:
                 r = file.read()
 
             with open(v_filename, "r") as file:

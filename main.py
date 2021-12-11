@@ -1,5 +1,6 @@
 import copy
 from yaml import load, dump
+from io import StringIO
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -42,9 +43,22 @@ def add_cascade(body):
 
 # help
 def remove_frontmatter(file):
-    content = file.read()
-    file.seek(0)
-    file.write(content)
+    stream = ""
+    inside_yaml = False
+    lines = file.readlines()
+    for line in lines:
+        if line != "---\n" and not inside_yaml:
+            stream = stream + line
+        elif line != "---\n" and inside_yaml:
+            pass
+        elif line == "---\n" and inside_yaml:
+            inside_yaml = False
+        elif line == "---\n" and not inside_yaml:
+            inside_yaml = True
+
+    file.truncate(0)
+    file.write(stream)
+
     return file
 
 
