@@ -1,9 +1,10 @@
 import unittest
+import os
 from main import *
 
 
 class TestStringMethods(unittest.TestCase):
-    yamlstring = """title: "Documentation"
+    yamlstring = r"""title: "Documentation"
 linkTitle: "Docs"
 weight: 20
 menu:
@@ -79,9 +80,11 @@ menu:
 
     def test_remove_frontmatter(self):
         i_filename = "test-files/1-input.md"
+        o_filename = "test-files/1-output.md"
+        os.system("cp {} {}".format(i_filename, o_filename))
         v_filename = "test-files/1-target.md"
 
-        with open(i_filename, "r") as file:
+        with open(i_filename, "r+") as file:
             remove_frontmatter(file)
 
         with open(i_filename, "r") as file:
@@ -95,13 +98,15 @@ menu:
 
     def test_insert_frontmatter(self):
         i_filename = "test-files/2-input.md"
+        o_filename = "test-files/2-output.md"
+        os.system("cp {} {}".format(i_filename, o_filename))
         v_filename = "test-files/2-target.md"
         i = self.yamlstring
 
-        with open(i_filename, "r") as file:
+        with open(o_filename, "r+") as file:
             insert_frontmatter(file, i)
 
-        with open(i_filename, "r") as file:
+        with open(o_filename, "r") as file:
             r = file.read()
 
         with open(v_filename, "r") as file:
