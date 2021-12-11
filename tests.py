@@ -1,10 +1,16 @@
 import unittest
 import os
 from main import *
+from yaml import load, dump
+
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 
 
 class TestStringMethods(unittest.TestCase):
-    yamlstring = r"""title: "Documentation"
+    yamlstring = """title: "Documentation"
 linkTitle: "Docs"
 weight: 20
 menu:
@@ -15,7 +21,7 @@ menu:
     parsedyaml = {
             'title': 'Documentation',
             'linkTitle': 'Docs',
-            'weight': '20',
+            'weight': 20,
             'menu': {
                 'main': {
                     'weight': 20,
@@ -50,10 +56,13 @@ menu:
         v = {
             'title': 'Documentation',
             'linkTitle': 'Docs',
-            'weight': '20',
+            'weight': 20,
         }
         i = self.parsedyaml
         r = remove_nav(i)
+        v = dump(v)
+        r = dump(r)
+
         self.assertEqual(v, r)
         return
 
@@ -61,7 +70,7 @@ menu:
         v = {
             'title': 'Documentation',
             'linkTitle': 'Docs',
-            'weight': '20',
+            'weight': 20,
             'menu': {
                 'main': {
                     'weight': 20,
@@ -84,16 +93,21 @@ menu:
         os.system("cp {} {}".format(i_filename, o_filename))
         v_filename = "test-files/1-target.md"
 
-        with open(i_filename, "r+") as file:
-            remove_frontmatter(file)
+        try:
+            with open(i_filename, "r+") as file:
+                remove_frontmatter(file)
 
-        with open(i_filename, "r") as file:
-            r = file.read()
+            with open(i_filename, "r") as file:
+                r = file.read()
 
-        with open(v_filename, "r") as file:
-            v = file.read()
+            with open(v_filename, "r") as file:
+                v = file.read()
 
-        self.assertEqual(v, r)
+            self.assertEqual(v, r)
+        finally:
+            os.system("rm {}".format(o_filename))
+
+
         return
 
     def test_insert_frontmatter(self):
@@ -103,22 +117,21 @@ menu:
         v_filename = "test-files/2-target.md"
         i = self.yamlstring
 
-        with open(o_filename, "r+") as file:
-            insert_frontmatter(file, i)
+        try:
+            with open(o_filename, "r+") as file:
+                insert_frontmatter(file, i)
 
-        with open(o_filename, "r") as file:
-            r = file.read()
+            with open(o_filename, "r") as file:
+                r = file.read()
 
-        with open(v_filename, "r") as file:
-            v = file.read()
+            with open(v_filename, "r") as file:
+                v = file.read()
 
-        self.assertEqual(v, r)
+            self.assertEqual(v, r)
+        finally:
+            os.system("rm {}".format(o_filename))
+
         return
-
-
-
-
-
 
 
 if __name__ == '__main__':

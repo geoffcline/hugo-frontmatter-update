@@ -1,3 +1,4 @@
+import copy
 from yaml import load, dump
 
 try:
@@ -23,7 +24,8 @@ def parse_yaml(raw):
 
 
 def dump_yaml(body):
-    return dump(body)
+    r = str(body)
+    return r
 
 
 def remove_nav(body):
@@ -32,9 +34,10 @@ def remove_nav(body):
 
 
 def add_cascade(body):
-    body['cascade'] = dict()
-    body['cascade']['type'] = "docs"
-    return body
+    r = copy.copy(body)
+    r['cascade'] = dict()
+    r['cascade']['type'] = "docs"
+    return r
 
 
 # help
@@ -48,7 +51,10 @@ def remove_frontmatter(file):
 def insert_frontmatter(file, raw):
     content = file.read()
     file.seek(0)
-    file.write(raw + content)
+    file.write("\n---\n")
+    file.write(raw)
+    file.write("\n---\n")
+    file.write(content)
     return file
 
 
