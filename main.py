@@ -1,5 +1,6 @@
 import copy
-from yaml import load
+import os
+from yaml import load, dump
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -10,6 +11,7 @@ except ImportError:
 def get_frontmatter(file):
     stream = ""
     inside_yaml = False
+    first_yaml_finished = False
     lines = file.readlines()
     for line in lines:
         if line != "---\n" and not inside_yaml:
@@ -18,7 +20,8 @@ def get_frontmatter(file):
             stream = stream + line
         elif line == "---\n" and inside_yaml:
             inside_yaml = False
-        elif line == "---\n" and not inside_yaml:
+            first_yaml_finished = True
+        elif line == "---\n" and not first_yaml_finished and not inside_yaml:
             inside_yaml = True
 
     return stream
@@ -47,6 +50,7 @@ def add_cascade(body):
 
 # help
 def remove_frontmatter(file):
+    file.seek(0)
     stream = ""
     inside_yaml = False
     lines = file.readlines()
@@ -78,8 +82,29 @@ def insert_frontmatter(file, raw):
 
 
 def driver():
-    result = dump_yaml(add_cascade(remove_nav(parse_yaml(get_frontmatter(None)))))
-    print(result)
+    os.system("cp -r content/ content-working/")
+
+    base_path = "content-working/en/docs/"
+    docs_index_path = base_path + "_index.md"
+    getting_started_path = base_path + "getting-started/_index.md"
+
+    with open(docs_index_path, "r+") as file:
+        r = get_frontmatter(file)
+        r = parse_yaml(r)
+        r = remove_nav(r)
+        r = add_cascade(r)
+        r = dump(r)  # huh
+        remove_frontmatter(file)
+        insert_frontmatter(file, r)
+
+    with open(getting_started_path, "r+") as file:
+        r = get_frontmatter(file)
+        r = parse_yaml(r)
+        r = remove_nav(r)
+        r = dump(r)  # huh
+        remove_frontmatter(file)
+        insert_frontmatter(file, r)
+
     return
 
 
